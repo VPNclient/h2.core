@@ -50,6 +50,12 @@ func IsUACryptoSuite(suite uint16) bool {
 	return suite >= 0xD001 && suite <= 0xD0FF
 }
 
+// IsTHCryptoSuite checks if suite ID is Thai (TH-PQC).
+// TH suites use range 0xEA01-0xEAFF (as defined in crypto/th/tls).
+func IsTHCryptoSuite(suite uint16) bool {
+	return suite >= 0xEA01 && suite <= 0xEAFF
+}
+
 // ParseProviderPriority extracts provider names from cipherSuites config.
 // Input examples: "cn,ru,us" or "cn,TLS_AES_128_GCM_SHA256,ru"
 // Returns list of valid provider names in order, or ["us"] if none found.
