@@ -1,65 +1,58 @@
 # ข้อกำหนด: sdd-https-vpn-ciphersuite-th (ชุดรหัสลับสำหรับประเทศไทย)
 
-> เวอร์ชัน: 1.0  
+> เวอร์ชัน: 1.1  
 > สถานะ: ร่าง (DRAFT)  
 > อัปเดตล่าสุด: 2026-05-11
 
 ## ปัญหาที่ต้องการแก้ไข (Problem Statement)
 
-เพื่อเสริมสร้างความปลอดภัยของ HTTPS VPN ให้รองรับมาตรฐานการเข้ารหัสลับสมัยใหม่ของประเทศไทย และเตรียมพร้อมสำหรับการเปลี่ยนแปลงสู่ยุค Quantum-Resistant Cryptography (QRC) ตามคำแนะนำของ NIST (FIPS 203, 204, 205) เพื่อให้มั่นใจว่าการสื่อสารจะยังคงปลอดภัยแม้ในยุคคอมพิวเตอร์ควอนตัม
+เพื่อเสริมสร้างความปลอดภัยของ HTTPS VPN ให้รองรับมาตรฐานการเข้ารหัสลับสมัยใหม่ของประเทศไทย และเตรียมพร้อมสำหรับการเปลี่ยนแปลงสู่ยุค Quantum-Resistant Cryptography (QRC) ตามคำแนะนำของ NIST (FIPS 203, 204, 205) โดยสแต็กการเข้ารหัสนี้จะถูกออกแบบให้ทำงานร่วมกับสถาปัตยกรรม HTTPS VPN เดิมได้อย่างไร้รอยต่อ (Seamless Integration) เพื่อรักษาความสมดุลระหว่างประสิทธิภาพและความปลอดภัยสูงสุด
 
 ## เรื่องราวของผู้ใช้ (User Stories)
 
 ### เรื่องราวหลัก (Primary)
 
 **ในฐานะ** ผู้ดูแลระบบความปลอดภัย (Security Administrator)  
-**ฉันต้องการ** เพิ่มชุดรหัสลับ (Ciphersuites) ที่รองรับอัลกอริทึม Post-Quantum Cryptography (PQC) เข้าไปใน HTTPS VPN  
-**เพื่อให้** ข้อมูลการสื่อสารได้รับการปกป้องจากภัยคุกคามในอนาคตและเป็นไปตามมาตรฐานสากลและระดับประเทศ
+**ฉันต้องการ** ใช้ระบบการแลกเปลี่ยนกุญแจแบบไฮบริด (Hybrid KEM) และการลงนามดิจิทัลที่เหมาะสมกับสถาปัตยกรรม TLS-based ของ HTTPS VPN  
+**เพื่อให้** ข้อมูลการสื่อสารมีความมั่นคงปลอดภัยสูงสุดในขณะที่ยังคงประสิทธิภาพสำหรับทราฟฟิกทั่วไป
 
 ## เกณฑ์การยอมรับ (Acceptance Criteria)
 
 ### สิ่งที่ต้องมี (Must Have)
 
-1. **Given** ระบบ HTTPS VPN  
-   **When** มีการตั้งค่าการเชื่อมต่อ  
-   **Then** ต้องสามารถเลือกใช้งาน ML-KEM (FIPS 203) สำหรับการแลกเปลี่ยนกุญแจ (Key Encapsulation Mechanism) ได้
+1. **การแลกเปลี่ยนกุญแจ (Key Exchange):**
+   - **HTTPS VPN Compatibility:** ระบบต้องสามารถแทรก Hybrid KEM เข้าไปในขั้นตอน TLS Handshake ของ HTTPS VPN ได้โดยไม่กระทบต่อโปรโตคอลรับส่งข้อมูลหลัก
+   - **Balanced Profile (Default):** ต้องใช้ Hybrid KEM ระหว่าง X25519 หรือ P-256 ร่วมกับ ML-KEM-768 สำหรับ Control Plane และ Session Establishment ทั่วไป
+   - **High-Assurance Profile:** ต้องรองรับ ML-KEM-1024 สำหรับช่องทางผู้ดูแลระบบ (Admin Channels), การลงทะเบียน (Enrollment), และการตั้งค่าช่องทางระยะยาว (Long-term setup)
 
-2. **Given** การลงนามดิจิทัล (Digital Signature)  
-   **When** มีการตรวจสอบความถูกต้อง  
-   **Then** ต้องรองรับ ML-DSA (FIPS 204) และ SLH-DSA (FIPS 205)
+2. **การลงนามดิจิทัล (Digital Signatures):**
+   - **Operational Use:** ใช้ Hybrid Ed25519/ECDSA + ML-DSA-65 สำหรับใบรับรองทั่วไป, Control API signing และ Signed config bundles
+   - **Conservative Trust Anchor:** ใช้ SLH-DSA สำหรับ Root Manifest (Offline), Firmware Signing fallback และ Disaster Recovery keys
 
-3. **Given** ความเสี่ยงจากช่องโหว่ของอัลกอริทึมหลัก  
-   **When** ML-KEM มีปัญหา  
-   **Then** ต้องมี HQC (Hamming Quasi-Cyclic) เป็นระบบสำรอง (Backup KEM)
+3. **ระบบสำรอง (Backup):**
+   - ต้องมี HQC (Hamming Quasi-Cyclic) เป็น Backup KEM ในกรณีที่ ML-KEM พบช่องโหว่
 
 ### สิ่งที่ควรมี (Should Have)
 
-- การจัดลำดับความสำคัญของชุดรหัสลับ (Cipher Suite Prioritization) สำหรับการใช้งานในประเทศไทย
-- ตัวอย่างการกำหนดค่า (Configuration Examples) ในภาษาไทย
-
-### สิ่งที่ยังไม่ทำในรอบนี้ (Won't Have)
-
-- การรวมระบบเข้ากับ Hardware Security Module (HSM) ที่ยังไม่รองรับ PQC
-- การรับรองมาตรฐานจากสำนักงานพัฒนาธุรกรรมทางอิเล็กทรอนิกส์ (ETDA) อย่างเป็นทางการในเฟสแรก
+- การเตรียมความพร้อมสำหรับมาตรฐานที่ใช้ Falcon ในอนาคตตามทิศทางของ NIST
+- การวิเคราะห์ช่องว่าง (Gap Analysis) สำหรับการเปลี่ยนผ่านจาก Classical เป็น PQC ทั้งระบบ
 
 ## ข้อจำกัด (Constraints)
 
-- **Technical**: ต้องทำงานร่วมกับโครงสร้างพื้นฐานเดิมของ HTTPS VPN ได้
-- **Performance**: อัลกอริทึม PQC อาจมีขนาดกุญแจที่ใหญ่ขึ้นและใช้เวลาประมวลผลนานขึ้น ต้องมีการทดสอบประสิทธิภาพ
-- **Platform**: รองรับบนระบบปฏิบัติการที่กำหนด (Darwin, Linux, etc.)
-- **Dependencies**: ขึ้นอยู่กับไลบรารีคริปโตกราฟีที่รองรับมาตรฐาน FIPS ใหม่
+- **Performance**: ML-KEM-1024 จะไม่ถูกใช้เป็นค่าเริ่มต้นสำหรับทราฟฟิกที่ไวต่อความหน่วง (Latency-sensitive) เนื่องจากขนาดกุญแจและภาระการประมวลผล
+- **Complexity**: การจัดการใบรับรองแบบ Hybrid จะมีความซับซ้อนเพิ่มขึ้นในการจัดการ Trust Chain
 
 ## คำถามที่ยังไม่มีคำตอบ (Open Questions)
 
-- [ ] ไลบรารี Go มาตรฐานหรือไลบรารีภายนอกใดที่เสถียรที่สุดสำหรับ ML-KEM/ML-DSA ในปัจจุบัน?
-- [ ] ความเข้ากันได้กับไคลเอนต์ VPN รุ่นเก่าเมื่อเปิดใช้งาน PQC?
+- [ ] การจัดการขนาด MTU ของ VPN เมื่อใช้ SLH-DSA ซึ่งมีขนาดลายเซ็นที่ใหญ่มาก
+- [ ] ความพร้อมของ Library สำหรับ ML-DSA และ SLH-DSA ในเวอร์ชัน Production
 
 ## เอกสารอ้างอิง (References)
 
-- FIPS 203: Module-Lattice-Based Key-Encapsulation Mechanism Standard
-- FIPS 204: Module-Lattice-Based Digital Signature Standard
-- FIPS 205: Stateless Hash-Based Digital Signature Standard
-- NIST PQC Project: HQC (Hamming Quasi-Cyclic)
+- FIPS 203: ML-KEM (Module-Lattice-Based Key-Encapsulation Mechanism)
+- FIPS 204: ML-DSA (Module-Lattice-Based Digital Signature Standard)
+- FIPS 205: SLH-DSA (Stateless Hash-Based Digital Signature Standard)
+- NIST PQC Project: HQC, Falcon (ongoing research)
 
 ---
 
