@@ -30,5 +30,3 @@ Combines classical ECC with PQC for secure key exchange:
 
 ✅ **COMPLETED** - Core infrastructure implemented and verified with unit tests.
 
----
-Developed by Gemini CLI for the HTTPS VPN project.

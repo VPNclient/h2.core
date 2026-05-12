@@ -86,8 +86,9 @@ Full index with metadata, tags, and relationships: `flows/adr-index.md`
 | `sdd-https-vpn-openconnect-server-backward-compatibility` | `flows/sdd-https-vpn-openconnect-server-backward-compatibility/_status.md` | REQUIREMENTS (drafting) |
 | `sdd-https-cisco-firmware-compatibility` | `flows/sdd-https-cisco-firmware-compatibility/_status.md` | PLAN (approved) |
 | `sdd-vpn-https-config-ciphersuites` | `flows/sdd-vpn-https-config-ciphersuites/_status.md` | COMPLETE |
-| `sdd-https-vpn-ciphersuite-cn` | `flows/sdd-https-vpn-ciphersuite-cn/_status.md` | REQUIREMENTS (drafting) |
+| `sdd-https-vpn-ciphersuite-cn` | `flows/sdd-https-vpn-ciphersuite-cn/_status.md` | IMPLEMENTATION (SM9 deferred) |
 | `sdd-https-vpn-multi-cert` | `flows/sdd-https-vpn-multi-cert/_status.md` | REQUIREMENTS (drafting) |
+| `sdd-https-vpn-ciphersuite-ua` | `flows/sdd-https-vpn-ciphersuite-ua/_status.md` | IMPLEMENTATION (базова реалізація завершена) |
 
 ### DDD Flows (Document-Driven)
 
