@@ -163,25 +163,43 @@ Available providers: `us`, `cn`, `ua`, `th`, `fr`, `uk`
 
 ```bash
 # Default (US crypto - Go stdlib)
-go build -o https-vpn ./cmd/https-vpn
+go build -o https_vpn ./cmd/https-vpn
 
 # With Thai PQC support
-go build -tags th -o https-vpn ./cmd/https-vpn
+go build -tags th -o https_vpn ./cmd/https-vpn
 
 # With UA support (Ukraine, post-quantum)
-go build -tags ua -o https-vpn ./cmd/https-vpn
+go build -tags ua -o https_vpn ./cmd/https-vpn
 
 # With SM support (China)
-go build -tags sm -o https-vpn ./cmd/https-vpn
+go build -tags sm -o https_vpn ./cmd/https-vpn
 
 # With GOST support (Russia)
-go build -tags gost -o https-vpn ./cmd/https-vpn
+go build -tags gost -o https_vpn ./cmd/https-vpn
 
 # With UK support (NCSC)
-go build -tags uk -o https-vpn ./cmd/https-vpn
+go build -tags uk -o https_vpn ./cmd/https-vpn
 
 # With FR support (France, ANSSI)
-go build -tags fr -o https-vpn ./cmd/https-vpn
+go build -tags fr -o https_vpn ./cmd/https-vpn
+```
+
+### Unix release binaries (darwin + linux)
+
+```bash
+make build-unix
+# or:
+bash ./build/unix.sh
+```
+
+### Provider bundles in the binary
+
+- **Default build**: includes **all** providers/ciphersuites (us, ru, cn, ua, th, ko, uk, fr).
+- **Custom build**: build only the providers you explicitly enable:
+
+```bash
+# Example: only RU + TH in the binary
+go build -tags "bundle_custom crypto_ru crypto_th" -o https_vpn ./cmd/https-vpn
 ```
 
 ## Project Structure

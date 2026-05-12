@@ -10,10 +10,6 @@ import (
 
 	"github.com/vpnclient/https-vpn/core"
 	"github.com/vpnclient/https-vpn/infra/conf"
-
-	// Register crypto providers
-	_ "github.com/vpnclient/https-vpn/crypto/ru"
-	_ "github.com/vpnclient/https-vpn/crypto/th"
 )
 
 var Version = "0.1.0-dev"
