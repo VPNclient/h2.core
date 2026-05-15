@@ -1,7 +1,7 @@
 # Requirements: h2.core Integrations
 
 > Version: 1.0
-> Status: DRAFT
+> Status: APPROVED
 > Last Updated: 2026-05-14
 
 ## Problem Statement
